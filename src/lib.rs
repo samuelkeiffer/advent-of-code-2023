@@ -5,7 +5,10 @@
 #![allow(clippy::comparison_chain)]
 
 pub use itertools::Itertools;
-pub use std::{collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque}, fs};
+pub use std::{
+    collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
+    fs,
+};
 pub use vek::*;
 
 pub mod days;
