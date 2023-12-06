@@ -4,7 +4,9 @@
 #![allow(clippy::wrong_self_convention)]
 #![allow(clippy::comparison_chain)]
 
+pub use core::ops::Range;
 pub use itertools::Itertools;
+pub use rayon::prelude::*;
 pub use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     fs,
