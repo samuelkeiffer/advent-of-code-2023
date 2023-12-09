@@ -6,12 +6,14 @@
 
 pub use core::ops::Range;
 pub use itertools::Itertools;
+pub use num::integer::lcm;
 pub use rayon::prelude::*;
 pub use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     fs,
 };
+pub use text_io::scan;
 pub use vek::*;
 
 pub mod days;
