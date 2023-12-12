@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-use advent_of_code_2022::days::*;
+use advent_of_code_2023::days::*;
 
 fn main() {
-    day10::run();
+    day11::run();
 }
