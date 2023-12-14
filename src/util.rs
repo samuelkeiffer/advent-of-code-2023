@@ -4,6 +4,12 @@ pub fn read_file(file: &str) -> String {
     fs::read_to_string(file).expect("Yeet")
 }
 
+pub fn inverted_indices<T: Copy>(grid: &[Vec<T>]) -> Vec<Vec<T>> {
+    (0..grid[0].len())
+        .map(|i| grid.iter().map(|g| g[i]).collect::<Vec<_>>())
+        .collect::<Vec<_>>()
+}
+
 pub fn numeric_digits_from_line(text: &str, line: usize) -> String {
     text.lines()
         .nth(line)

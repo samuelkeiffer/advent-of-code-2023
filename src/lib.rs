@@ -12,6 +12,7 @@ pub use std::{
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     fs,
+    mem::take,
 };
 pub use text_io::scan;
 pub use vek::*;
