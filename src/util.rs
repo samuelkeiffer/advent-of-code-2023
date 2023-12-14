@@ -4,6 +4,12 @@ pub fn read_file(file: &str) -> String {
     fs::read_to_string(file).expect("Yeet")
 }
 
+pub fn mirrored_indices<T: Copy>(grid: &[Vec<T>]) -> Vec<Vec<T>> {
+    grid.iter()
+        .map(|r| r.iter().copied().rev().collect::<Vec<_>>())
+        .collect::<Vec<_>>()
+}
+
 pub fn inverted_indices<T: Copy>(grid: &[Vec<T>]) -> Vec<Vec<T>> {
     (0..grid[0].len())
         .map(|i| grid.iter().map(|g| g[i]).collect::<Vec<_>>())
