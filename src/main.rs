@@ -2,5 +2,5 @@
 use advent_of_code_2023::days::*;
 
 fn main() {
-    day14::run();
+    day15::run();
 }

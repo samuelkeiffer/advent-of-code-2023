@@ -1,4 +1,4 @@
-#![feature(string_remove_matches)]
+#![feature(ascii_char, string_remove_matches)]
 #![allow(clippy::type_complexity)]
 #![allow(clippy::needless_range_loop)]
 #![allow(clippy::wrong_self_convention)]
@@ -9,6 +9,7 @@ pub use itertools::Itertools;
 pub use num::integer::lcm;
 pub use rayon::prelude::*;
 pub use std::{
+    array,
     cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     fs,
