@@ -14,6 +14,7 @@ pub use std::{
     collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque},
     fs,
     mem::take,
+    thread,
 };
 pub use text_io::scan;
 pub use vek::*;
