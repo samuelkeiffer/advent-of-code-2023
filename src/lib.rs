@@ -7,6 +7,7 @@
 pub use core::ops::Range;
 pub use itertools::Itertools;
 pub use num::integer::lcm;
+pub use pathfinding::prelude::*;
 pub use rayon::prelude::*;
 pub use std::{
     array,
