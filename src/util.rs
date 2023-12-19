@@ -4,7 +4,28 @@ pub fn read_file(file: &str) -> String {
     fs::read_to_string(file).expect("Yeet")
 }
 
+pub fn dbg_grid(grid: &[Vec<bool>]) {
+    for row in grid.iter() {
+        println!(
+            "{}",
+            row.iter()
+                .map(|x| if *x { '#' } else { '.' })
+                .collect::<String>()
+        );
+    }
+    println!(" ");
+}
+
 impl Dir {
+    pub fn to_vec(&self) -> Vec2<i32> {
+        match self {
+            Dir::Up => Vec2::new(-1, 0),
+            Dir::Down => Vec2::new(1, 0),
+            Dir::Left => Vec2::new(0, -1),
+            Dir::Right => Vec2::new(0, 1),
+        }
+    }
+
     pub fn next_pos(&self, pos: Vec2<usize>) -> Option<Vec2<usize>> {
         match self {
             Dir::Up => {
