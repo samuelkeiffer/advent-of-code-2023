@@ -14,7 +14,7 @@ fn part2(file: &str) -> u64 {
     let grid = parse_file(file);
     let end = Vec2::new(grid.len() - 1, grid[0].len() - 1);
     let adjacent_nodes = |(p, d, i): (Vec2<usize>, Dir, usize)| {
-        let mut vec = adjacent_indices_2d_with_dir(p, &grid, false)
+        let mut vec = adjacent_indices_2d_with_dir(p, &grid, false, false)
             .into_iter()
             .map(|(p, e)| ((p, e, if d == e { i + 1 } else { 1 }), grid[p.x][p.y]))
             .collect::<Vec<_>>();
@@ -49,7 +49,7 @@ fn part1(file: &str) -> u64 {
     let grid = parse_file(file);
     let end = Vec2::new(grid.len() - 1, grid[0].len() - 1);
     let adjacent_nodes = |(p, d, i): (Vec2<usize>, Dir, usize)| {
-        let mut vec = adjacent_indices_2d_with_dir(p, &grid, false)
+        let mut vec = adjacent_indices_2d_with_dir(p, &grid, false, false)
             .into_iter()
             .map(|(p, e)| ((p, e, if d == e { i + 1 } else { 0 }), grid[p.x][p.y]))
             .collect::<Vec<_>>();

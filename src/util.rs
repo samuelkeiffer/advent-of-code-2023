@@ -4,14 +4,15 @@ pub fn read_file(file: &str) -> String {
     fs::read_to_string(file).expect("Yeet")
 }
 
-pub fn dbg_grid(grid: &[Vec<bool>]) {
+pub fn read_bool_grid<F: Fn(char) -> bool>(grid: &str, condition: F) -> Vec<Vec<bool>> {
+    grid.lines()
+        .map(|l| l.chars().map(&condition).collect::<Vec<_>>())
+        .collect::<Vec<_>>()
+}
+
+pub fn dbg_grid<T, F: Fn(&T) -> char>(grid: &[Vec<T>], conv: F) {
     for row in grid.iter() {
-        println!(
-            "{}",
-            row.iter()
-                .map(|x| if *x { '#' } else { '.' })
-                .collect::<String>()
-        );
+        println!("{}", row.iter().map(&conv).collect::<String>());
     }
     println!(" ");
 }
@@ -86,8 +87,26 @@ pub fn numeric_digits_from_line(text: &str, line: usize) -> String {
         .collect()
 }
 
-pub fn adjacent_indices_2d<T>(p: Vec2<usize>, grid: &[Vec<T>], diag: bool) -> Vec<Vec2<usize>> {
-    adjacent_indices_2d_with_dir(p, grid, diag)
+pub fn adjacent_pos_i32(p: &Vec2<i32>) -> Vec<Vec2<i32>> {
+    vec![
+        Vec2::new(p.x - 1, p.y - 1),
+        Vec2::new(p.x - 1, p.y),
+        Vec2::new(p.x - 1, p.y + 1),
+        Vec2::new(p.x, p.y - 1),
+        Vec2::new(p.x, p.y + 1),
+        Vec2::new(p.x + 1, p.y - 1),
+        Vec2::new(p.x + 1, p.y),
+        Vec2::new(p.x + 1, p.y + 1),
+    ]
+}
+
+pub fn adjacent_indices_2d<T>(
+    p: Vec2<usize>,
+    grid: &[Vec<T>],
+    diag: bool,
+    wrap: bool,
+) -> Vec<Vec2<usize>> {
+    adjacent_indices_2d_with_dir(p, grid, diag, wrap)
         .into_iter()
         .map(|(p, _d)| p)
         .collect::<Vec<_>>()
@@ -97,48 +116,94 @@ pub fn adjacent_indices_2d_with_dir<T>(
     p: Vec2<usize>,
     grid: &[Vec<T>],
     diag: bool,
+    wrap: bool,
 ) -> Vec<(Vec2<usize>, Dir)> {
-    let mut candidates = if p.x == 0 && p.y == 0 {
-        vec![
-            (Vec2::new(p.x, p.y + 1), Dir::Right),
-            (Vec2::new(p.x + 1, p.y), Dir::Down),
-            (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
-        ]
-    } else if p.x == 0 {
-        vec![
-            (Vec2::new(p.x, p.y - 1), Dir::Left),
-            (Vec2::new(p.x, p.y + 1), Dir::Right),
-            (Vec2::new(p.x + 1, p.y - 1), Dir::Down),
-            (Vec2::new(p.x + 1, p.y), Dir::Down),
-            (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
-        ]
-    } else if p.y == 0 {
-        vec![
-            (Vec2::new(p.x - 1, p.y), Dir::Up),
-            (Vec2::new(p.x - 1, p.y + 1), Dir::Up),
-            (Vec2::new(p.x, p.y + 1), Dir::Right),
-            (Vec2::new(p.x + 1, p.y), Dir::Down),
-            (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
-        ]
+    if wrap {
+        let modulus = |x, add| {
+            if x {
+                let val = p.x + grid.len();
+                let val = if add { val + 1 } else { val - 1 };
+                val % grid.len()
+            } else {
+                let val = p.y + grid[0].len();
+                let val = if add { val + 1 } else { val - 1 };
+                val % grid[0].len()
+            }
+        };
+        if diag {
+            vec![
+                (
+                    Vec2::new(modulus(true, false), modulus(false, false)),
+                    Dir::Up,
+                ),
+                (Vec2::new(modulus(true, false), p.y), Dir::Up),
+                (
+                    Vec2::new(modulus(true, false), modulus(false, true)),
+                    Dir::Up,
+                ),
+                (Vec2::new(p.x, modulus(false, false)), Dir::Left),
+                (Vec2::new(p.x, modulus(false, true)), Dir::Right),
+                (
+                    Vec2::new(modulus(true, true), modulus(false, false)),
+                    Dir::Down,
+                ),
+                (Vec2::new(modulus(true, true), p.y), Dir::Down),
+                (
+                    Vec2::new(modulus(true, true), modulus(false, true)),
+                    Dir::Down,
+                ),
+            ]
+        } else {
+            vec![
+                (Vec2::new(modulus(true, false), p.y), Dir::Up),
+                (Vec2::new(p.x, modulus(false, false)), Dir::Left),
+                (Vec2::new(p.x, modulus(false, true)), Dir::Right),
+                (Vec2::new(modulus(true, true), p.y), Dir::Down),
+            ]
+        }
     } else {
-        vec![
-            (Vec2::new(p.x - 1, p.y - 1), Dir::Up),
-            (Vec2::new(p.x - 1, p.y), Dir::Up),
-            (Vec2::new(p.x - 1, p.y + 1), Dir::Up),
-            (Vec2::new(p.x, p.y - 1), Dir::Left),
-            (Vec2::new(p.x, p.y + 1), Dir::Right),
-            (Vec2::new(p.x + 1, p.y - 1), Dir::Down),
-            (Vec2::new(p.x + 1, p.y), Dir::Down),
-            (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
-        ]
-    };
+        let mut candidates = if p.x == 0 && p.y == 0 {
+            vec![
+                (Vec2::new(p.x, p.y + 1), Dir::Right),
+                (Vec2::new(p.x + 1, p.y), Dir::Down),
+                (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
+            ]
+        } else if p.x == 0 {
+            vec![
+                (Vec2::new(p.x, p.y - 1), Dir::Left),
+                (Vec2::new(p.x, p.y + 1), Dir::Right),
+                (Vec2::new(p.x + 1, p.y - 1), Dir::Down),
+                (Vec2::new(p.x + 1, p.y), Dir::Down),
+                (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
+            ]
+        } else if p.y == 0 {
+            vec![
+                (Vec2::new(p.x - 1, p.y), Dir::Up),
+                (Vec2::new(p.x - 1, p.y + 1), Dir::Up),
+                (Vec2::new(p.x, p.y + 1), Dir::Right),
+                (Vec2::new(p.x + 1, p.y), Dir::Down),
+                (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
+            ]
+        } else {
+            vec![
+                (Vec2::new(p.x - 1, p.y - 1), Dir::Up),
+                (Vec2::new(p.x - 1, p.y), Dir::Up),
+                (Vec2::new(p.x - 1, p.y + 1), Dir::Up),
+                (Vec2::new(p.x, p.y - 1), Dir::Left),
+                (Vec2::new(p.x, p.y + 1), Dir::Right),
+                (Vec2::new(p.x + 1, p.y - 1), Dir::Down),
+                (Vec2::new(p.x + 1, p.y), Dir::Down),
+                (Vec2::new(p.x + 1, p.y + 1), Dir::Down),
+            ]
+        };
 
-    candidates.retain(|(p, _)| grid.get(p.x).and_then(|r| r.get(p.y)).is_some());
-    candidates.retain(|(q, _)| {
-        let p = p.as_::<i64>();
-        let q = q.as_::<i64>();
-        let mnhtn_dist = (p.x - q.x).abs() + (p.y - q.y).abs();
-        diag || mnhtn_dist == 1
-    });
-    candidates
+        candidates.retain(|(p, _)| grid.get(p.x).and_then(|r| r.get(p.y)).is_some());
+        candidates.retain(|(q, _)| {
+            let p = p.as_::<i64>();
+            let q = q.as_::<i64>();
+            let mnhtn_dist = (p.x - q.x).abs() + (p.y - q.y).abs();
+            diag || mnhtn_dist == 1
+        });
+        candidates
+    }
 }

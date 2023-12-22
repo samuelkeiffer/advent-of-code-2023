@@ -15,7 +15,7 @@ fn part2(file: &str) -> u32 {
         .filter(|(_, sym)| **sym == '*')
         .map(|(pos, _)| {
             let mut adjacent_digits = Vec::new();
-            for pos in adjacent_indices_2d(*pos, &schematic.raw, true) {
+            for pos in adjacent_indices_2d(*pos, &schematic.raw, true, false) {
                 if schematic.digits.contains_key(&pos) {
                     adjacent_digits.push(pos);
                 }
@@ -58,7 +58,7 @@ fn part1(file: &str) -> u32 {
             let mut adjacent = false;
             for i in 0..=number.ilog10() {
                 let pos = Vec2::new(pos.x, pos.y + i as usize);
-                for pos in adjacent_indices_2d(pos, &schematic.raw, true) {
+                for pos in adjacent_indices_2d(pos, &schematic.raw, true, false) {
                     if schematic.symbols.contains_key(&pos) {
                         adjacent = true;
                     }
