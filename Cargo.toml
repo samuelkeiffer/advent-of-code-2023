@@ -13,3 +13,4 @@ rayon = "1.8.0"
 text_io = "0.1.12"
 num = "0.4.1"
 pathfinding = "3.0.5"
+gauss_jordan_elimination = { version = "0.2.0", features = ["generic_calculation"] }
