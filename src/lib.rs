@@ -9,6 +9,7 @@ pub use gauss_jordan_elimination::gauss_jordan_elimination_generic;
 pub use itertools::Itertools;
 pub use num::integer::lcm;
 pub use pathfinding::prelude::*;
+pub use petgraph::prelude::*;
 pub use rayon::prelude::*;
 pub use std::{
     array,
@@ -19,6 +20,7 @@ pub use std::{
     ops::{Add, Div, Mul, RangeInclusive, Sub},
     thread,
 };
+pub use string_interner::{symbol::SymbolU32, StringInterner};
 pub use text_io::scan;
 pub use vek::*;
 
